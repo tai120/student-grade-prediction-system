@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>学生成绩预测系统</title>
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+
+<!-- ============ 登录页 ============ -->
+<div id="login" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">📚</div>
+    <h1>学生成绩预测系统</h1>
+    <p class="sub">基于机器学习 · 多元线性回归模型</p>
+    <p class="hint">请选择身份进入系统</p>
+    <div class="role-grid">
+      <button class="role-btn" data-role="student"><span class="ico">🎓</span><b>学生</b><em>成绩自查 · 查漏补缺</em></button>
+      <button class="role-btn" data-role="teacher"><span class="ico">👨‍🏫</span><b>教师</b><em>教学辅助 · 学情预警</em></button>
+      <button class="role-btn" data-role="admin"><span class="ico">🏫</span><b>教务管理</b><em>教学管理 · 质量分析</em></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 主界面 ============ -->
+<div id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="logo">📚 成绩预测系统</div>
+    <nav id="nav"></nav>
+    <button id="logout" class="logout">← 切换角色</button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <h2 id="page-title">首页概览</h2>
+      <span id="role-badge" class="badge"></span>
+    </header>
+
+    <!-- 首页概览 -->
+    <section id="page-home" class="page">
+      <div class="kpi-grid" id="kpi"></div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>📉 期末成绩分布</h3>
+          <div id="chart-hist" class="chart"></div>
+        </div>
+        <div class="card">
+          <h3>⚠️ 挂科风险预警 Top5</h3>
+          <div class="table-scroll">
+            <table class="tbl">
+              <thead><tr><th>姓名</th><th>班级</th><th>预测期末</th><th>风险概率</th><th>主要短板</th></tr></thead>
+              <tbody id="risk-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>🤖 模型说明</h3>
+        <p id="model-info" class="model-info"></p>
+      </div>
+    </section>
+
+    <!-- 成绩预测(学生自查 / 教师带入) -->
+    <section id="page-predict" class="page hidden">
+      <div class="grid-2">
+        <div class="card">
+          <h3>📝 输入学习数据</h3>
+          <div id="stu-pick" class="stu-pick hidden">
+            <label for="stu-select">选择学生(一键带入其数据):</label>
+            <select id="stu-select"></select>
+          </div>
+          <div id="predict-form"></div>
+          <button id="predict-btn" class="btn">🎯 预测期末成绩</button>
+        </div>
+        <div class="card">
+          <h3>🎯 预测结果</h3>
+          <div id="predict-result" class="result-empty">填写左侧各项数据后, 点击「预测期末成绩」</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 教学辅助(教师端) -->
+    <section id="page-teacher" class="page hidden">
+      <div class="kpi-grid" id="teacher-kpi"></div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>📊 各特征对期末成绩的影响</h3>
+          <div id="chart-imp" class="chart"></div>
+        </div>
+        <div class="card">
+          <h3>🚨 学困生预警名单 <span class="muted">(按预测成绩升序)</span></h3>
+          <div class="table-scroll tall">
+            <table class="tbl">
+              <thead><tr><th>学号</th><th>姓名</th><th>班级</th><th>测验</th><th>作业</th><th>出勤</th><th>期中</th><th>预测期末</th><th>等级</th><th>风险</th></tr></thead>
+              <tbody id="stu-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 数据可视化分析 -->
+    <section id="page-viz" class="page hidden">
+      <div class="grid-2">
+        <div class="card"><h3>🎯 预测成绩 vs 实际成绩(测试集)</h3><div id="chart-scatter" class="chart"></div></div>
+        <div class="card"><h3>🍩 预测等级构成</h3><div id="chart-pie" class="chart"></div></div>
+        <div class="card"><h3>🕸️ 班级学习指标对比</h3><div id="chart-radar" class="chart"></div></div>
+        <div class="card"><h3>📊 各班及格率 / 优秀率 / 风险率</h3><div id="chart-classbar" class="chart"></div></div>
+      </div>
+    </section>
+
+    <!-- 教学管理参考(教务端) -->
+    <section id="page-admin" class="page hidden">
+      <div class="card">
+        <h3>🏫 班级教学质量对比</h3>
+        <div class="table-scroll">
+          <table class="tbl">
+            <thead><tr><th>班级</th><th>人数</th><th>平均分</th><th>及格率</th><th>优秀率</th><th>挂科风险率</th><th>教学评级</th></tr></thead>
+            <tbody id="class-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3>💡 教学管理建议(自动生成)</h3>
+        <ul id="admin-advice" class="advice-list"></ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="static/echarts.min.js"></script>
+<script>
+/* 本地图表库缺失时回退到 CDN */
+window.__loadCDN = function () {
+  if (window.echarts) return;
+  var s = document.createElement("script");
+  s.src = "https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js";
+  s.onload = function () { if (window.__onChartsReady) window.__onChartsReady(); };
+  s.onerror = function () {
+    var s2 = document.createElement("script");
+    s2.src = "https://unpkg.com/echarts@5.5.1/dist/echarts.min.js";
+    s2.onload = function () { if (window.__onChartsReady) window.__onChartsReady(); };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s);
+};
+if (!window.echarts) window.__loadCDN();
+</script>
+<script src="static/app.js"></script>
+</body>
+</html>
