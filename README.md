@@ -34,6 +34,29 @@ python app.py
     └── echarts.min.js  # 图表库(缺失时前端自动回退 CDN)
 ```
 
+## 打包为桌面应用(exe)
+
+```bash
+pip install pyinstaller
+pyinstaller --onefile --noconsole --name 学生成绩预测系统 --add-data "static;static" app.py
+```
+
+- 产物: `dist/学生成绩预测系统.exe`(已打包, 桌面已建快捷方式), 双击即启动并自动打开浏览器, 目标电脑无需安装 Python
+- 数据文件在 exe 旁的 `data/` 目录自动生成, 可 Excel 编辑
+- 端口 5000 被占用时自动改用 5001/5002
+- 首次运行若出现 Windows SmartScreen 提示, 点「更多信息 → 仍要运行」
+
+## 推送到 GitHub
+
+先在 github.com 新建一个**空的**仓库(仓库名建议 `student-grade-prediction-system`), 然后:
+
+```bash
+git remote add origin https://github.com/<你的用户名>/student-grade-prediction-system.git
+git push -u origin main
+```
+
+推送时会弹出浏览器登录 GitHub, 登录一次后本机记住凭据, 以后直接 `git push` 即可。
+
 ## 模型说明
 
 - 特征: 平时测验、作业完成、出勤率、期中考试、课堂表现(0-100 分)
